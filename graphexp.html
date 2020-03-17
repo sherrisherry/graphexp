@@ -77,6 +77,29 @@
 						<input name="limit_field" id="limit_field" value="50" min="1" max="1000" type="number"/>
 					</div>
 				</div>
+			</div>
+			<div class="nav container" id="search_e_bar">
+				<div class="nav inputs_container_top">
+					<div class="nav input_unit_container">
+						<label for="label_field_e">Edge label:</label>
+						<input name="label_field_e" id="label_field_e" value="" />
+					</div>
+					<div class="nav input_unit_container">
+						<label for="search_field_e">Edge property:</label>
+						<input name="search_field_e" id="search_field_e" value="" />
+					</div>
+					<div class="nav input_unit_container">
+						<label class="nav input_label" for="search_value_e">Edge Property value:</label>
+						<input name="search_value" id="search_value_e" value="" />
+					</div>
+					<div class="nav input_unit_container">
+						<label for="search_type_e">Type of search:</label>
+						<select name="search_type_e" id="search_type_e">
+							<option value="eq">Equals</option>
+							<option value="contains">Contains</option>
+						</select>
+					</div>
+				</div>
 				<div class="nav controls">
 					<button name="search query" onclick="search_query();">Search</button>
 				</div>

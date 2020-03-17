@@ -97,6 +97,10 @@ var graphioGremlin = (function(){
 		let limit_field = $('#limit_field').val();
         let search_type = $('#search_type').val();
         let communication_method = $('#communication_method').val();
+		let input_string_e = $('#search_value_e').val();
+		let input_field_e = $('#search_field_e').val();
+		let label_field_e = $('#label_field_e').val();
+        let search_type_e = $('#search_type_e').val();
 		//console.log(input_field)
 		var filtered_string = input_string;//You may add .replace(/\W+/g, ''); to refuse any character not in the alphabet
 		if (filtered_string.length>50) filtered_string = filtered_string.substring(0,50); // limit string length
@@ -123,6 +127,22 @@ var graphioGremlin = (function(){
 				limit_field = node_limit_per_request;
 		}
 
+		let has_fun = "";
+		if (label_field_e !== "") {
+			has_fun = ".hasLabel('" + label_field_e + "')";
+		}
+		if (input_field_e !== "" && input_string_e !== "") {
+			has_fun += ".has('" + input_field_e + "',";
+			switch (search_type) {
+				case "eq":
+					has_fun += "'" + input_string_e + "')"
+					break;
+				case "contains":
+					has_fun += "textContains('" + input_string_e + "'))";
+					break;
+			}
+		}
+
 		let gremlin_query_nodes = "nodes = " + traversal_source + ".V()" + has_str;
         // Query limit
 		if (limit_field !== "" && isInt(limit_field) && limit_field > 0) {
@@ -132,8 +152,8 @@ var graphioGremlin = (function(){
         }
 		gremlin_query_nodes += ".toList();";
 		
-		let gremlin_query_edges = "edges = " + traversal_source + ".V(nodes).aggregate('node').outE().as('edge').inV().where(within('node')).select('edge').toList();";
-        let gremlin_query_edges_no_vars = "edges = " + traversal_source + ".V()"+has_str+".aggregate('node').outE().as('edge').inV().where(within('node')).select('edge').toList();";
+		let gremlin_query_edges = "edges = " + traversal_source + ".V(nodes).aggregate('node').outE()"+has_fun+".as('edge').inV().where(within('node')).select('edge').toList();";
+        let gremlin_query_edges_no_vars = "edges = " + traversal_source + ".V()"+has_str+".aggregate('node').outE()"+has_fun+".as('edge').inV().where(within('node')).select('edge').toList();";
         //let gremlin_query_edges_no_vars = "edges = " + traversal_source + ".V()"+has_str+".bothE();";
 		let gremlin_query = gremlin_query_nodes + gremlin_query_edges + "[nodes,edges]";
 		console.log(gremlin_query);
@@ -141,9 +161,9 @@ var graphioGremlin = (function(){
 		// while busy, show we're doing something in the messageArea.
 		$('#messageArea').html('<h3>(loading)</h3>');
 		// To display the queries in the message area:
-		//var message_nodes = "<p>Node query: '"+gremlin_query_nodes+"'</p>";
-		//var message_edges = "<p>Edge query: '"+gremlin_query_edges+"'</p>";
-		//var message = message_nodes + message_edges;
+		// var message_nodes = "<p>Node query: '"+gremlin_query_nodes+"'</p>";
+		// var message_edges = "<p>Edge query: '"+gremlin_query_edges_no_vars+"'</p>";
+		// var message = message_nodes + message_edges;
 		var message = "";
 		if (SINGLE_COMMANDS_AND_NO_VARS) {
 			var nodeQuery = create_single_command(gremlin_query_nodes);
